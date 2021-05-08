@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Link from "next/link";
 import { Input, Menu, Row, Col } from "antd";
 import "antd/dist/antd.css";
+import UserProfile from "./UserProfile";
+import LoginForm from "./LoginForm";
 
-const AppLayout = (props) => {
-  console.log(props);
+const AppLayout = ({ children }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   return (
     <div>
       <Menu mode='horizontal'>
@@ -30,10 +33,10 @@ const AppLayout = (props) => {
       </Menu>
       <Row gutter={8}>
         <Col xs={24} md={6}>
-          Left Menu{" "}
+          {isLoggedIn ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
-          {props.children}
+          {children}
         </Col>
         <Col xs={24} md={6}>
           {/* 아래 a tag 안에 들어가는 내용은 새창에서 뭔가를 띄울때 보안적인 부분까지 포함 된 tag 내용들임. */}
