@@ -5,6 +5,11 @@ import { Input, Menu, Row, Col } from "antd";
 import "antd/dist/antd.css";
 import UserProfile from "./UserProfile";
 import LoginForm from "./LoginForm";
+import styled from "styled-components";
+
+const SearchInput = styled(Input.Search)`
+  vertical-align: middle;
+`;
 
 const AppLayout = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,7 +28,7 @@ const AppLayout = ({ children }) => {
           </Link>
         </Menu.Item>
         <Menu.Item>
-          <Input.Search enterButton style={{ verticalAlign: "middle" }} />
+          <Input.Search enterButton />
         </Menu.Item>
         <Menu.Item>
           <Link href='/signup'>
@@ -33,7 +38,11 @@ const AppLayout = ({ children }) => {
       </Menu>
       <Row gutter={8}>
         <Col xs={24} md={6}>
-          {isLoggedIn ? <UserProfile /> : <LoginForm />}
+          {isLoggedIn ? (
+            <UserProfile setIsLoggedIn={setIsLoggedIn} />
+          ) : (
+            <LoginForm setIsLoggedIn={setIsLoggedIn} />
+          )}
         </Col>
         <Col xs={24} md={12}>
           {children}
