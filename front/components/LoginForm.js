@@ -3,7 +3,7 @@ import { Button, Input, Form } from "antd";
 import Proptypes from "prop-types";
 // import Form from "antd/lib/form/Form";
 import Link from "next/link";
-import styled from "styled-co;mponents";
+import styled from "styled-components";
 import useInput from "../hooks/useinput";
 import { useDispatch } from "react-redux";
 import { loginAction } from "../reducers";
@@ -24,7 +24,7 @@ const LoginForm = () => {
 
   const onSubmitForm = useCallback(() => {
     console.log(id, password);
-    setIsLoggedIn(true);
+    // setIsLoggedIn(true);
     dispatch(loginAction({ id, password }));
   }, [id, password]);
 
