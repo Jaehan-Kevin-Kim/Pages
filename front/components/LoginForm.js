@@ -3,8 +3,10 @@ import { Button, Input, Form } from "antd";
 import Proptypes from "prop-types";
 // import Form from "antd/lib/form/Form";
 import Link from "next/link";
-import styled from "styled-components";
+import styled from "styled-co;mponents";
 import useInput from "../hooks/useinput";
+import { useDispatch } from "react-redux";
+import { loginAction } from "../reducers";
 
 const ButtonWrapper = styled.div`
   margin-top: 10px;
@@ -14,13 +16,16 @@ const FormWrapper = styled(Form)`
   padding: 10px;
 `;
 
-const LoginForm = ({ setIsLoggedIn }) => {
+const LoginForm = () => {
+  const dispatch = useDispatch(); //useDispatch는 store.dispatch와 같음.
+
   const [id, onChangeId] = useInput("");
   const [password, onChangePassword] = useInput("");
 
   const onSubmitForm = useCallback(() => {
     console.log(id, password);
     setIsLoggedIn(true);
+    dispatch(loginAction({ id, password }));
   }, [id, password]);
 
   return (
@@ -60,8 +65,8 @@ const LoginForm = ({ setIsLoggedIn }) => {
   );
 };
 
-LoginForm.propTypes = {
-  setIsLoggedIn: Proptypes.func.isRequired,
-};
+// LoginForm.propTypes = {
+//   setIsLoggedIn: Proptypes.func.isRequired,
+// };
 
 export default LoginForm;
