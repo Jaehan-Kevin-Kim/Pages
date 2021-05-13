@@ -14,6 +14,9 @@ const SearchInput = styled(Input.Search)`
 
 const AppLayout = ({ children }) => {
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // const { isLoggedIn } = useSelector((state) => state.user); //Redux 사용하면 위와 같이 useState로 값 설정 필요 없음
+  //바로 위와 같이 써도 되고, 이렇게 써도 됨.
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn); //Redux 사용하면 위와 같이 useState로 값 설정 필요 없음
 
   return (

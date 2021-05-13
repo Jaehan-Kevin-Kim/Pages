@@ -12,6 +12,7 @@ const configureStore = () => {
     process.env.NODE_ENV === "production"
       ? compose(applyMiddleware(...middlewares))
       : composeWithDevTools(applyMiddleware(...middlewares));
+  //위 설명: 개발용 middleware랑 배포용 middleware는 다르기 때문에 위와 같이 정의 함.
 
   const store = createStore(reducer, enhancer);
   // store.dispatch({

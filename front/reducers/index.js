@@ -1,43 +1,56 @@
 import { HYDRATE } from "next-redux-wrapper";
+import { combineReducers } from "redux";
+import user from "./user";
+import post from "./post";
 
+/*
 const initialState = {
   user: {
-    isLoggedIn: false,
-    user: null,
-    signUpData: {},
-    loginData: {},
+    //아래 세부 내용들은 redux쪼개기 할때 각각의 파일로 들어갔음.
+    // isLoggedIn: false,
+    // user: null,
+    // signUpData: {},
+    // loginData: {},
   },
   post: {
-    mainPosts: [],
+    // mainPosts: [],
   },
 };
+*/
 
-export const loginAction = (data) => {
-  return {
-    type: "LOG_IN",
-    data,
-  };
-};
-export const logoutAction = () => {
-  return {
-    type: "LOG_OUT",
-  };
-};
+//역시나 아래 내용들은 분리된 redux 중 맞는 값에 넣음
+// export const loginAction = (data) => {
+//   return {
+//     type: "LOG_IN",
+//     data,
+//   };
+// };
+// export const logoutAction = () => {
+//   return {
+//     type: "LOG_OUT",
+//   };
+// };
 
 // reducer (이전상태, 액션) => 다음상태 (이전상태와, 액션을 통해서 다음 상태를 만들어 내는 함수)
-const rootReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case HYDRATE:
-      console.log("HYDRATE", action);
-      return { ...state, ...action.payload };
-    case "LOG_IN":
-      return { ...state, user: { ...state.user, isLoggedIn: true, user: action.data } };
-    case "LOG_OUT":
-      return { ...state, user: { ...state.user, isLoggedIn: false, user: null } };
-    default:
-      return state;
-  }
-};
+const rootReducer = combineReducers({
+  index: (state = {}, action) => {
+    switch (action.type) {
+      case HYDRATE:
+        console.log("HYDRATE", action);
+        return { ...state, ...action.payload };
+
+      //역시나 아래 내용들은 분리된 redux 중 맞는 값에 넣음
+      // case "LOG_IN":
+      //   return { ...state, user: { ...state.user, isLoggedIn: true, user: action.data } };
+      // case "LOG_OUT":
+      //   return { ...state, user: { ...state.user, isLoggedIn: false, user: null } };
+      default:
+        return state;
+    }
+  },
+  user,
+  post,
+});
 
 export default rootReducer;
 
