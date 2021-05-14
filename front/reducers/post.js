@@ -1,11 +1,73 @@
 export const initialState = {
-  mainPosts: [],
+  mainPosts: [
+    {
+      id: 1,
+      User: {
+        id: 1,
+        nickname: "Kevin",
+      },
+      content: "First Post #HashTag, #Express",
+      Images: [
+        {
+          src: "https://res.cloudinary.com/highereducation/image/upload/c_scale,w_750/f_auto,fl_lossy,q_auto:eco/v1532988864/TheBestColleges.org/images/study-notebooks.jpg",
+        },
+        {
+          src: "https://www.insidehighered.com/sites/default/server_files/media/iStock-520374378.jpg",
+        },
+        {
+          src: "https://www.fastweb.com/uploads/article_photo/photo/2161/crop380w_istock_000002193842xsmall-books.jpg",
+        },
+      ],
+      Comments: [
+        {
+          User: {
+            nickname: "nero",
+          },
+          content: "Great post!",
+        },
+        {
+          User: {
+            nickname: "jaehan",
+          },
+          content: `it's really educational`,
+        },
+      ],
+    },
+  ],
+  imagePaths: [],
+  postAdded: false,
+};
+
+const ADD_POST = "ADD_POST";
+
+export const addPost = {
+  type: ADD_POST,
+};
+
+const dummyPost = {
+  id: 2,
+  User: {
+    id: 1,
+    nickname: "kevin",
+  },
+  content: "Dummy Data",
+  Images: [],
+  Comments: [],
 };
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    default:
-      return state;
+    case ADD_POST: {
+      return {
+        ...state,
+        mainPosts: [dummyPost, ...state.mainPosts],
+        postAdded: true,
+      };
+    }
+
+    default: {
+      return { ...state };
+    }
   }
 };
 
