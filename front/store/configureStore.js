@@ -3,11 +3,25 @@
 import { createWrapper } from "next-redux-wrapper";
 import { createStore, applyMiddleware, compose } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
+import createSagaMiddleware from "redux-saga";
 
 import reducer from "../reducers/index";
+import rootSaga from "../sagas";
+
+const loggerMiddleware =
+  ({ dispatch, getState }) =>
+  (next) =>
+  (action) => {
+    // if (typeof action === "function") {
+    //   return action(dispatch, getState);
+    // }
+    console.log(action);
+    return next(action);
+  };
 
 const configureStore = () => {
-  const middlewares = [];
+  const sagaMiddleware = createSagaMiddleware();
+  const middlewares = [sagaMiddleware, loggerMiddleware];
   const enhancer =
     process.env.NODE_ENV === "production"
       ? compose(applyMiddleware(...middlewares))
@@ -15,6 +29,7 @@ const configureStore = () => {
   //위 설명: 개발용 middleware랑 배포용 middleware는 다르기 때문에 위와 같이 정의 함.
 
   const store = createStore(reducer, enhancer);
+  store.sagaTask = sagaMiddleware.run(rootSaga);
   // store.dispatch({
   //   type: "CHANGE_NICKNAME",
   //   data: "Jaehan",

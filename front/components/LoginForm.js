@@ -5,8 +5,8 @@ import Proptypes from "prop-types";
 import Link from "next/link";
 import styled from "styled-components";
 import useInput from "../hooks/useinput";
-import { useDispatch } from "react-redux";
-import { loginAction } from "../reducers/user";
+import { useDispatch, useSelector } from "react-redux";
+import { loginRequestAction } from "../reducers/user";
 
 const ButtonWrapper = styled.div`
   margin-top: 10px;
@@ -21,11 +21,12 @@ const LoginForm = () => {
 
   const [id, onChangeId] = useInput("");
   const [password, onChangePassword] = useInput("");
+  const { isLoggingIn } = useSelector((state) => state.user);
 
   const onSubmitForm = useCallback(() => {
     console.log(id, password);
     // setIsLoggedIn(true);
-    dispatch(loginAction({ id, password }));
+    dispatch(loginRequestAction({ id, password }));
   }, [id, password]);
 
   return (
@@ -51,7 +52,7 @@ const LoginForm = () => {
       <div style={{ marginTop: "10px" }}> */}
       <ButtonWrapper>
         {/* <div style={styledMargin}> */}
-        <Button type='primary' htmlType='submit' loading={false}>
+        <Button type='primary' htmlType='submit' loading={isLoggingIn}>
           Log In
         </Button>
         <Link href='/signup'>
