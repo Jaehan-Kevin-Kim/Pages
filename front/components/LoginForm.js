@@ -19,22 +19,22 @@ const FormWrapper = styled(Form)`
 const LoginForm = () => {
   const dispatch = useDispatch(); //useDispatch는 store.dispatch와 같음.
 
-  const [id, onChangeId] = useInput("");
+  const [email, onChangeEmail] = useInput("");
   const [password, onChangePassword] = useInput("");
-  const { isLoggingIn } = useSelector((state) => state.user);
+  const { loginLoading } = useSelector((state) => state.user);
 
   const onSubmitForm = useCallback(() => {
-    console.log(id, password);
+    console.log(email, password);
     // setIsLoggedIn(true);
-    dispatch(loginRequestAction({ id, password }));
-  }, [id, password]);
+    dispatch(loginRequestAction({ email, password }));
+  }, [email, password]);
 
   return (
     <FormWrapper onFinish={onSubmitForm}>
       <div>
-        <label htmlFor='user-id'>ID</label>
+        <label htmlFor='user-email'>Email</label>
         <br />
-        <Input name='user-id' value={id} onChange={onChangeId} required />
+        <Input name='user-email' type='email' value={email} onChange={onChangeEmail} required />
       </div>
       <div>
         <label htmlFor='user-password'>Password</label>
@@ -52,7 +52,7 @@ const LoginForm = () => {
       <div style={{ marginTop: "10px" }}> */}
       <ButtonWrapper>
         {/* <div style={styledMargin}> */}
-        <Button type='primary' htmlType='submit' loading={isLoggingIn}>
+        <Button type='primary' htmlType='submit' loading={loginLoading}>
           Log In
         </Button>
         <Link href='/signup'>
