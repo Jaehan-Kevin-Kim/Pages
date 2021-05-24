@@ -7,16 +7,19 @@ import {
   HeartTwoTone,
 } from "@ant-design/icons";
 import React, { useCallback, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import PostImages from "./PostImages";
 import CommentForm from "./CommentForm";
 import PostCardContent from "./PostCardContent";
+import { REMOVE_POST_REQUEST } from "../reducers/post";
 
 const PostCard = ({ post }) => {
   const [liked, setLiked] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
 
+  const dispatch = useDispatch();
+  const { removePostLoading } = useSelector((state) => state.post);
   const { me } = useSelector((state) => state.user);
   // const id = me && me.id;
   const id = me?.id;
@@ -31,6 +34,12 @@ const PostCard = ({ post }) => {
     setCommentFormOpened((prev) => !prev);
   }, []);
 
+  const onRemovePost = useCallback(() => {
+    dispatch({
+      type: REMOVE_POST_REQUEST,
+      data: post.id,
+    });
+  }, []);
   return (
     <div style={{ marginBottom: 20 }}>
       <Card
@@ -50,7 +59,9 @@ const PostCard = ({ post }) => {
                 {id && post.User.id === id ? (
                   <>
                     <Button>Modify</Button>
-                    <Button type='danger'>Delete</Button>
+                    <Button type='danger' onClick={onRemovePost} loading={removePostLoading}>
+                      Delete
+                    </Button>
                   </>
                 ) : (
                   <Button>Report</Button>
