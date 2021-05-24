@@ -21,7 +21,7 @@ const LoginForm = () => {
 
   const [email, onChangeEmail] = useInput("");
   const [password, onChangePassword] = useInput("");
-  const { loginLoading } = useSelector((state) => state.user);
+  const { logInLoading } = useSelector((state) => state.user);
 
   const onSubmitForm = useCallback(() => {
     console.log(email, password);
@@ -52,7 +52,7 @@ const LoginForm = () => {
       <div style={{ marginTop: "10px" }}> */}
       <ButtonWrapper>
         {/* <div style={styledMargin}> */}
-        <Button type='primary' htmlType='submit' loading={loginLoading}>
+        <Button type='primary' htmlType='submit' loading={logInLoading}>
           Log In
         </Button>
         <Link href='/signup'>

@@ -1,3 +1,5 @@
+import shortId from "shortid";
+
 export const initialState = {
   mainPosts: [
     {
@@ -49,11 +51,15 @@ export const initialState = {
   addPostLoading: false,
   addPostDone: false,
   addPostError: null,
+  addCommentLoading: false,
+  addCommentDone: false,
+  addCommentError: null,
 };
 
 export const ADD_POST_REQUEST = "ADD_POST_REQUEST";
 export const ADD_POST_SUCCESS = "ADD_POST_SUCCESS";
 export const ADD_POST_FAILURE = "ADD_POST_FAILURE";
+
 export const ADD_COMMENT_REQUEST = "ADD_COMMENT_REQUEST";
 export const ADD_COMMENT_SUCCESS = "ADD_COMMENT_SUCCESS";
 export const ADD_COMMENT_FAILURE = "ADD_COMMENT_FAILURE";
@@ -67,16 +73,25 @@ export const addComment = (data) => ({
   data,
 });
 
-const dummyPost = {
-  id: 2,
+const dummyPost = (data) => ({
+  id: shortId.generate(),
+  content: data,
   User: {
     id: 1,
-    nickname: "kevin",
+    nickname: "Kevin",
   },
-  content: "Dummy Data",
   Images: [],
   Comments: [],
-};
+});
+
+const dummyComment = (data) => ({
+  id: shortId.generate(),
+  content: data,
+  User: {
+    id: 1,
+    nickname: "Kevin",
+  },
+});
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -84,9 +99,10 @@ const reducer = (state = initialState, action) => {
       return { ...state, addPostLoading: true, addPostDone: false, addPostError: null };
     }
     case ADD_POST_SUCCESS: {
+      // action.data.content, postId, userId;
       return {
         ...state,
-        mainPosts: [dummyPost, ...state.mainPosts],
+        mainPosts: [dummyPost(action.data), ...state.mainPosts],
         addPostLoading: false,
         addPostDone: true,
       };
@@ -97,10 +113,18 @@ const reducer = (state = initialState, action) => {
     case ADD_COMMENT_REQUEST: {
       return { ...state, addCommentLoading: true, addCommentDone: false, addCommentError: null };
     }
+
+    //아래 부분 이해 안되면 게시글,댓글 saga 작성 하기 다시 체크. 11:30분 정도
     case ADD_COMMENT_SUCCESS: {
+      const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
+      const post = { ...state.mainPosts[postIndex] };
+      post.Comments = [dummyComment(action.data.content), ...post.Comments];
+      const mainPosts = [...state.mainPosts];
+      mainPosts[postIndex] = post;
+
       return {
         ...state,
-        mainComments: [dummyComment, ...state.mainComments],
+        mainPosts,
         addCommentLoading: false,
         addCommentDone: true,
       };
