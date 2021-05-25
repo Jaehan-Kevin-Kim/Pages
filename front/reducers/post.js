@@ -1,4 +1,5 @@
 import shortId from "shortid";
+import produce from "immer";
 
 export const initialState = {
   mainPosts: [
@@ -106,63 +107,104 @@ const dummyComment = (data) => ({
   },
 });
 
+//reducer: 이전 상태를 액션을 통해 다음 상태로 만들어내는 함수 (불변성은 지키면서)
 const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case ADD_POST_REQUEST: {
-      return { ...state, addPostLoading: true, addPostDone: false, addPostError: null };
-    }
-    case ADD_POST_SUCCESS: {
-      // action.data.content, postId, userId;
-      return {
-        ...state,
-        mainPosts: [dummyPost(action.data), ...state.mainPosts],
-        addPostLoading: false,
-        addPostDone: true,
-      };
-    }
-    case ADD_POST_FAILURE:
-      return { ...state, addPostLoading: false, addPostError: action.error };
-    case REMOVE_POST_REQUEST: {
-      return { ...state, removePostLoading: true, removePostDone: false, removePostError: null };
-    }
-    case REMOVE_POST_SUCCESS: {
-      // action.data.content, postId, userId;
-      return {
-        ...state,
-        mainPosts: state.mainPosts.filter((v) => v.id !== action.data),
-        removePostLoading: false,
-        removePostDone: true,
-      };
-    }
-    case REMOVE_POST_FAILURE:
-      return { ...state, removePostLoading: false, removePostError: action.error };
+  // immer: 이전 상태를 액션을 통해 다음 상태로 만들어내는 함수 (불변성 안지켜도 immer가 알아서 지켜줌.)
+  // 여기부터는 draft가 state처럼 사용되고 이건 막 바꿔도 됨. (immer가 알아서 처리해 주므로)
+  return produce(state, (draft) => {
+    switch (action.type) {
+      case ADD_POST_REQUEST: {
+        draft.addPostLoading = true;
+        draft.addPostDone = false;
+        draft.addPostError = null;
+        break;
+        // return { ...state, addPostLoading: true, addPostDone: false, addPostError: null };
+      }
+      case ADD_POST_SUCCESS: {
+        draft.addPostLoading = false;
+        draft.addPostDone = true;
+        // draft.mainPosts = [dummyPost(action.data), ...state.mainPosts]; //이렇게 하거나 혹은 아래와 같이 unshift사용 하면 배열값을 따로 정의안하고 (...이 사라 짐) 바로 사용가능 함
+        draft.mainPosts.unshift(dummyPost(action.data));
+        break;
+        // action.data.content, postId, userId;
+        // return {
+        //   ...state,
+        //   mainPosts: [dummyPost(action.data), ...state.mainPosts],
+        //   addPostLoading: false,
+        //   addPostDone: true,
+        // };
+      }
+      case ADD_POST_FAILURE:
+        draft.addPostLoading = false;
+        draft.addPostError = action.error;
+        break;
+      // return { ...state, addPostLoading: false, addPostError: action.error };
+      case REMOVE_POST_REQUEST: {
+        draft.removePostLoading = true;
+        draft.removePostDone = false;
+        draft.removePostError = null;
+        break;
+        // return { ...state, removePostLoading: true, removePostDone: false, removePostError: null };
+      }
+      case REMOVE_POST_SUCCESS: {
+        // action.data.content, postId, userId;
+        draft.removePostLoading = false;
+        draft.removePostDone = true;
+        draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.data);
+        break;
+        // return {
+        //   ...state,
+        //   mainPosts: state.mainPosts.filter((v) => v.id !== action.data),
+        //   removePostLoading: false,
+        //   removePostDone: true,
+        // };
+      }
+      case REMOVE_POST_FAILURE:
+        draft.removePostLoading = false;
+        draft.removePostError = true;
+        break;
+      // return { ...state, removePostLoading: false, removePostError: action.error };
 
-    case ADD_COMMENT_REQUEST: {
-      return { ...state, addCommentLoading: true, addCommentDone: false, addCommentError: null };
-    }
+      case ADD_COMMENT_REQUEST: {
+        draft.addCommentLoading = true;
+        draft.addCommentDone = false;
+        draft.addCommentError = null;
+        break;
+        // return { ...state, addCommentLoading: true, addCommentDone: false, addCommentError: null };
+      }
 
-    //아래 부분 이해 안되면 게시글,댓글 saga 작성 하기 다시 체크. 11:30분 정도
-    case ADD_COMMENT_SUCCESS: {
-      const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
-      const post = { ...state.mainPosts[postIndex] };
-      post.Comments = [dummyComment(action.data.content), ...post.Comments];
-      const mainPosts = [...state.mainPosts];
-      mainPosts[postIndex] = post;
+      //아래 부분 이해 안되면 게시글,댓글 saga 작성 하기 다시 체크. 11:30분 정도
+      case ADD_COMMENT_SUCCESS: {
+        const post = draft.mainPosts.find((v) => v.id === action.data.postId);
+        post.Comments.unshift(dummyComment(action.data.content));
+        draft.addCommentLoading = false;
+        draft.addcommentDone = true;
+        break;
+        //위는 immer를 통해서 불변성 신경안쓰고 코딩함. 아래는 기존 방식으로 불변성 신경쓰고 코딩한 내용
+        // const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
+        // const post = { ...state.mainPosts[postIndex] };
+        // post.Comments = [dummyComment(action.data.content), ...post.Comments];
+        // const mainPosts = [...state.mainPosts];
+        // mainPosts[postIndex] = post;
+        // return {
+        //   ...state,
+        //   mainPosts,
+        //   addCommentLoading: false,
+        //   addCommentDone: true,
+        // };
+      }
+      case ADD_COMMENT_FAILURE:
+        draft.addCoomentLoading = false;
+        draft.addCommentError = action.error;
+        break;
+      // return { ...state, addCommentLoading: false, addCommentError: action.error };
 
-      return {
-        ...state,
-        mainPosts,
-        addCommentLoading: false,
-        addCommentDone: true,
-      };
+      default: {
+        break;
+        // return { ...state };
+      }
     }
-    case ADD_COMMENT_FAILURE:
-      return { ...state, addCommentLoading: false, addCommentError: action.error };
-
-    default: {
-      return { ...state };
-    }
-  }
+  });
 };
 
 export default reducer;
