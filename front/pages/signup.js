@@ -5,6 +5,7 @@ import AppLayout from "../components/AppLayout";
 import useInput from "../hooks/useinput";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
+import { SIGN_UP_REQUEST } from "../reducers/user";
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -57,28 +58,28 @@ const Signup = () => {
       </Head>
       <Form onFinish={onSubmit}>
         <div>
-          <label htmlFor='user-email'>Email</label> <br />
-          <Input name='user-email' type='email' value={email} required onChange={onChangeEmail} />
+          <label htmlFor="user-email">Email</label> <br />
+          <Input name="user-email" type="email" value={email} required onChange={onChangeEmail} />
         </div>
         <div>
-          <label htmlFor='user-nickname'>Nick Name</label> <br />
-          <Input name='user-nickname' value={nickname} required onChange={onChangeNickname} />
+          <label htmlFor="user-nickname">Nick Name</label> <br />
+          <Input name="user-nickname" value={nickname} required onChange={onChangeNickname} />
         </div>
         <div>
-          <label htmlFor='user-password'>Password</label> <br />
+          <label htmlFor="user-password">Password</label> <br />
           <Input
-            name='user-password'
-            type='password'
+            name="user-password"
+            type="password"
             value={password}
             required
             onChange={onChangePassword}
           />
         </div>
         <div>
-          <label htmlFor='user-password-check'>Password Check</label> <br />
+          <label htmlFor="user-password-check">Password Check</label> <br />
           <Input
-            name='user-password-check'
-            type='password'
+            name="user-password-check"
+            type="password"
             value={passwordCheck}
             required
             onChange={onChangePasswordCheck}
@@ -86,13 +87,13 @@ const Signup = () => {
           {passwordError && <ErrorMessage>Password is not matched!</ErrorMessage>}
         </div>
         <div>
-          <Checkbox name='user-term' checked={term} onChange={onChangeTerm}>
+          <Checkbox name="user-term" checked={term} onChange={onChangeTerm}>
             Do you agree to the terms and conditions for use?
           </Checkbox>
           {termError && <ErrorMessage>You have to agree to the terms and conditions.</ErrorMessage>}
         </div>
         <div style={{ marginTop: "10px" }}>
-          <Button type='primary' htmlType='submit' loading={signUpLoading}>
+          <Button type="primary" htmlType="submit" loading={signUpLoading}>
             Sign Up
           </Button>
         </div>
