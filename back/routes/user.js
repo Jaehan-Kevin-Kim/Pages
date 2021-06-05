@@ -1,12 +1,34 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const { User } = require("../models");
+const passport = require("passport");
 const router = express.Router();
+
+//Post /user/login
+router.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      console.error(err);
+      return next(err);
+    }
+    if (info) {
+      return res.status(401).send(info.reason);
+    }
+    return req.login(user, async (loginErr) => {
+      if (loginErr) {
+        console.error(loginErr);
+        return next(loginErr);
+      }
+      return res.json(user);
+    });
+  })(req, res, next);
+});
 
 //POST /user
 router.post("/", async (req, res, next) => {
   try {
     const exUser = await User.findOne({
+      // where안에 조건 넣기(만약 db에서 기존 email값이 있으면 해당 값 출력, 없으면 null 출력 됨.)
       where: {
         email: req.body.email,
       },
@@ -22,6 +44,7 @@ router.post("/", async (req, res, next) => {
       nickname: req.body.nickname,
       password: hashedPassword,
     });
+    // res.setHeader("Access-Control-Allow-Origin", "http://localhost:3060");
     // res.send("ok");
     res.status(201).send("ok");
   } catch (error) {

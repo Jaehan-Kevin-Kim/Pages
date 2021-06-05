@@ -166,7 +166,7 @@ const reducer = (state = initialState, action) => {
       // return { ...state, signUpLoading: true, signUpDone: false, signUpError: null };
       case SIGN_UP_SUCCESS:
         draft.signUpLoading = false;
-        draft.signUpDone = done;
+        draft.signUpDone = true;
         draft.me = null;
         break;
       // return { ...state, signUpLoading: false, signUpDone: true, me: null };
