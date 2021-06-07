@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Input, Form } from "antd";
 import Proptypes from "prop-types";
 // import Form from "antd/lib/form/Form";
@@ -21,7 +21,13 @@ const LoginForm = () => {
 
   const [email, onChangeEmail] = useInput("");
   const [password, onChangePassword] = useInput("");
-  const { logInLoading } = useSelector((state) => state.user);
+  const { logInLoading, logInError } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (logInError) {
+      alert(logInError);
+    }
+  }, [logInError]);
 
   const onSubmitForm = useCallback(() => {
     console.log(email, password);
@@ -32,16 +38,16 @@ const LoginForm = () => {
   return (
     <FormWrapper onFinish={onSubmitForm}>
       <div>
-        <label htmlFor='user-email'>Email</label>
+        <label htmlFor="user-email">Email</label>
         <br />
-        <Input name='user-email' type='email' value={email} onChange={onChangeEmail} required />
+        <Input name="user-email" type="email" value={email} onChange={onChangeEmail} required />
       </div>
       <div>
-        <label htmlFor='user-password'>Password</label>
+        <label htmlFor="user-password">Password</label>
         <br />
         <Input
-          name='user-password'
-          type='password'
+          name="user-password"
+          type="password"
           value={password}
           onChange={onChangePassword}
           required
@@ -52,10 +58,10 @@ const LoginForm = () => {
       <div style={{ marginTop: "10px" }}> */}
       <ButtonWrapper>
         {/* <div style={styledMargin}> */}
-        <Button type='primary' htmlType='submit' loading={logInLoading}>
+        <Button type="primary" htmlType="submit" loading={logInLoading}>
           Log In
         </Button>
-        <Link href='/signup'>
+        <Link href="/signup">
           <a>
             <Button>SignUp</Button>
           </a>

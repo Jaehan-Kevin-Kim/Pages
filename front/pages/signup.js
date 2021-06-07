@@ -10,7 +10,7 @@ import { SIGN_UP_REQUEST } from "../reducers/user";
 
 const Signup = () => {
   const dispatch = useDispatch();
-  const { signUpLoading, signUpDone, signUpError } = useSelector((state) => state.user);
+  const { signUpLoading, signUpDone, signUpError, me } = useSelector((state) => state.user);
   const [email, onChangeEmail] = useInput("");
   const [nickname, onChangeNickname] = useInput("");
   const [password, onChangePassword] = useInput("");
@@ -19,8 +19,14 @@ const Signup = () => {
   const [passwordError, setPasswordError] = useState(false);
 
   useEffect(() => {
+    if (me && me.id) {
+      Router.replace("/"); // push하면 뒤로가기 했을때 다시 그 page가 살아있지만, replace하면 새로 변경된 페이지 전의 페이지가 사라지므로, 뒤로가기 해도 이전 페이지로 돌아가지 않음.
+    }
+  }, [me && me.id]);
+
+  useEffect(() => {
     if (signUpDone) {
-      Router.push("/");
+      Router.replace("/");
     }
   }, [signUpDone]);
 

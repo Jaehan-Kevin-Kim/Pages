@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
-    'User', // MySQL에는 users 테이블 생성 됨
+    "User", // MySQL에는 users 테이블 생성 됨
     {
       //id가 기본적으로 들어있고, 자동으로 생성 됨.
       email: {
@@ -18,23 +18,23 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      charset: 'utf8',
-      collate: 'utf8_general_ci', //한글 사용 가능
+      charset: "utf8",
+      collate: "utf8_general_ci", //한글 사용 가능
     }
   );
   User.associate = (db) => {
     db.User.hasMany(db.Post);
     db.User.hasMany(db.Comment);
-    db.User.belongsToMany(db.Post, { through: 'Like', as: 'Liked' }); // Like 관련
+    db.User.belongsToMany(db.Post, { through: "Like", as: "Liked" }); // Like 관련
     db.User.belongsToMany(db.User, {
-      through: 'Follow',
-      as: 'Followers',
-      foreignKey: 'FollowingId',
+      through: "Follow",
+      as: "Followers",
+      foreignKey: "FollowingId",
     });
     db.User.belongsToMany(db.User, {
-      through: 'Follow',
-      as: 'Followings',
-      foreignKey: 'FollowerId',
+      through: "Follow",
+      as: "Followings",
+      foreignKey: "FollowerId",
     });
   };
 
