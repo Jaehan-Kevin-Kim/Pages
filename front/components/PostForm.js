@@ -28,17 +28,17 @@ const PostForm = () => {
   }, [imageInput.current]);
 
   return (
-    <Form style={{ margin: "10px 0 20px" }} encType='multipart/form-data' onFinish={onSubmit}>
+    <Form style={{ margin: "10px 0 20px" }} encType="multipart/form-data" onFinish={onSubmit}>
       <Input.TextArea
         value={text}
         onChange={onChangeText}
         maxLength={140}
-        placeholder='Do you have anything to share?'
+        placeholder="Do you have anything to share?"
       />
       <div>
-        <input type='file' multiple hidden ref={imageInput} />
+        <input type="file" multiple hidden ref={imageInput} />
         <Button onClick={onClickImageUpload}>Image Upload</Button>
-        <Button type='primary' style={{ float: "right" }} htmlType='submit'>
+        <Button type="primary" style={{ float: "right" }} htmlType="submit">
           Tweet!
         </Button>
       </div>

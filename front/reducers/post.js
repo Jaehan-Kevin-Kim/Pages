@@ -125,6 +125,7 @@ export const addComment = (data) => ({
   data,
 });
 
+/*
 const dummyPost = (data) => ({
   id: data.id,
   content: data.content,
@@ -144,6 +145,7 @@ const dummyComment = (data) => ({
     nickname: "Kevin",
   },
 });
+*/
 
 //reducer: 이전 상태를 액션을 통해 다음 상태로 만들어내는 함수 (불변성은 지키면서)
 const reducer = (state = initialState, action) => {
@@ -180,7 +182,8 @@ const reducer = (state = initialState, action) => {
         draft.addPostLoading = false;
         draft.addPostDone = true;
         // draft.mainPosts = [dummyPost(action.data), ...state.mainPosts]; //이렇게 하거나 혹은 아래와 같이 unshift사용 하면 배열값을 따로 정의안하고 (...이 사라 짐) 바로 사용가능 함
-        draft.mainPosts.unshift(dummyPost(action.data));
+        // draft.mainPosts.unshift(dummyPost(action.data));
+        draft.mainPosts.unshift(action.data);
         break;
         // action.data.content, postId, userId;
         // return {
@@ -231,8 +234,8 @@ const reducer = (state = initialState, action) => {
 
       //아래 부분 이해 안되면 게시글,댓글 saga 작성 하기 다시 체크. 11:30분 정도
       case ADD_COMMENT_SUCCESS: {
-        const post = draft.mainPosts.find((v) => v.id === action.data.postId);
-        post.Comments.unshift(dummyComment(action.data.content));
+        const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+        post.Comments.unshift(action.data);
         draft.addCommentLoading = false;
         draft.addcommentDone = true;
         break;
