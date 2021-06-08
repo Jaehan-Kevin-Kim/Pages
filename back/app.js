@@ -22,8 +22,8 @@ passportConfig();
 
 app.use(
   cors({
-    origin: "*",
-    credentials: false,
+    origin: "http://localhost:3060",
+    credentials: true, // 이걸 true로 하면 cookie도 전달이 됨.
   })
 );
 app.use(express.json()); // front-end에서 json 형식의 값을 보내줄 때 사용

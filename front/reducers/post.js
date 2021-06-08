@@ -181,7 +181,7 @@ const reducer = (state = initialState, action) => {
       case ADD_POST_SUCCESS: {
         draft.addPostLoading = false;
         draft.addPostDone = true;
-        // draft.mainPosts = [dummyPost(action.data), ...state.mainPosts]; //이렇게 하거나 혹은 아래와 같이 unshift사용 하면 배열값을 따로 정의안하고 (...이 사라 짐) 바로 사용가능 함
+        // draft.mainPosts = [dummyPost(action.data), ...state.mainPosts]; // 이렇게 하거나 혹은 아래와 같이 unshift사용 하면 배열값을 따로 정의안하고 (...이 사라 짐) 바로 사용가능 함
         // draft.mainPosts.unshift(dummyPost(action.data));
         draft.mainPosts.unshift(action.data);
         break;
