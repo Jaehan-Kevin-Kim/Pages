@@ -15,6 +15,7 @@ const CommentForm = ({ post }) => {
     if (addCommentDone) {
       setCommentText("");
     }
+    console.log('comment Text: ', commentText);
   }, [addCommentDone]);
 
   const onSubmitComment = useCallback(() => {
@@ -35,7 +36,7 @@ const CommentForm = ({ post }) => {
           type='primary'
           htmlType='submit'
           loading={addCommentLoading}>
-          Tweet!
+          Comment Submit!
         </Button>
       </Form.Item>
     </Form>

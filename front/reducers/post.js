@@ -1,8 +1,9 @@
-import shortId from "shortid";
+// import shortId from "shortid";
 import produce from "immer";
-import faker from "faker";
+// import faker from "faker";
 
 export const initialState = {
+  /*
   // mainPosts: [
   //   // {
   //   //   id: 1,
@@ -56,6 +57,7 @@ export const initialState = {
   //   //   ],
   //   // },
   // ],
+  */
   mainPosts: [],
   imagePaths: [],
   hasMorePosts: true,
@@ -73,6 +75,7 @@ export const initialState = {
   addCommentError: null,
 };
 
+/*
 export const generateDummyPost = (number) =>
   Array(number)
     .fill()
@@ -98,6 +101,7 @@ export const generateDummyPost = (number) =>
         },
       ],
     }));
+    */
 // initialState.mainPosts = initialState.mainPosts.concat(generateDummyPost(10));
 
 export const LOAD_POSTS_REQUEST = "LOAD_POSTS_REQUEST";
@@ -237,7 +241,7 @@ const reducer = (state = initialState, action) => {
         const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
         post.Comments.unshift(action.data);
         draft.addCommentLoading = false;
-        draft.addcommentDone = true;
+        draft.addCommentDone = true;
         break;
         //위는 immer를 통해서 불변성 신경안쓰고 코딩함. 아래는 기존 방식으로 불변성 신경쓰고 코딩한 내용
         // const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);

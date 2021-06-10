@@ -46,21 +46,21 @@ const PostCard = ({ post }) => {
       <Card
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
-          <RetweetOutlined key='retweet' />,
+          <RetweetOutlined key="retweet" />,
           liked ? (
-            <HeartTwoTone twoToneColor='red' key='heart' onClick={onToggleLike} />
+            <HeartTwoTone twoToneColor="red" key="heart" onClick={onToggleLike} />
           ) : (
-            <HeartOutlined key='heart' onClick={onToggleLike} />
+            <HeartOutlined key="heart" onClick={onToggleLike} />
           ),
-          <MessageOutlined key='comment' onClick={onToggleComment} />,
+          <MessageOutlined key="comment" onClick={onToggleComment} />,
           <Popover
-            key='more'
+            key="more"
             content={
               <Button.Group>
                 {id && post.User.id === id ? (
                   <>
                     <Button>Modify</Button>
-                    <Button type='danger' onClick={onRemovePost} loading={removePostLoading}>
+                    <Button type="danger" onClick={onRemovePost} loading={removePostLoading}>
                       Delete
                     </Button>
                   </>
@@ -84,7 +84,7 @@ const PostCard = ({ post }) => {
           <CommentForm post={post} />
           <List
             header={`${post.Comments.length}'s comments`}
-            itemLayout='horizontal'
+            itemLayout="horizontal"
             dataSource={post.Comments}
             renderItem={(item) => (
               <li>
@@ -108,8 +108,8 @@ PostCard.propTypes = {
   post: PropTypes.shape({
     id: PropTypes.number,
     User: PropTypes.object,
-    content: PropTypes.String,
-    createdAt: PropTypes.object,
+    content: PropTypes.string,
+    createdAt: PropTypes.string,
     Comment: PropTypes.arrayOf(PropTypes.object),
     Images: PropTypes.arrayOf(PropTypes.object),
   }).isRequired,
