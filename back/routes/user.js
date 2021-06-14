@@ -118,4 +118,22 @@ router.post("/logout", isLoggedIn, (req, res, next) => {
   res.send("ok");
 });
 
+// PATCH /user/nickname
+router.patch("/nickname", isLoggedIn, async (req, res, next) => {
+  try {
+    await User.update(
+      {
+        nickname: req.body.nickname, //첫번째 객체: 뭘 수정할지 명시
+      },
+      {
+        where: { id: req.user.id }, // 두번째 객체: 조건(누구거 수정할지 명시)
+      }
+    );
+    res.status(200).json({ nickname: req.body.nickname });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 module.exports = router;
