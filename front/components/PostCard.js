@@ -12,23 +12,38 @@ import PropTypes from "prop-types";
 import PostImages from "./PostImages";
 import CommentForm from "./CommentForm";
 import PostCardContent from "./PostCardContent";
-import { REMOVE_POST_REQUEST } from "../reducers/post";
+import { LIKE_POST_REQUEST, REMOVE_POST_REQUEST, UNLIKE_POST_REQUEST } from "../reducers/post";
 import FollowButton from "./FollowButton";
 
 const PostCard = ({ post }) => {
-  const [liked, setLiked] = useState(false);
+  // const [liked, setLiked] = useState(false);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
 
   const dispatch = useDispatch();
   const { removePostLoading } = useSelector((state) => state.post);
+
   const { me } = useSelector((state) => state.user);
   // const id = me && me.id;
   const id = me?.id;
   // (위 me && me.id 와 같은 문법이지만 훨씬 짧은 새로운 문법)
 
-  const onToggleLike = useCallback(() => {
-    setLiked((prev) => !prev);
+  const liked = post.Likers.find((v) => v.id === id);
+
+  const onLike = useCallback(() => {
+    dispatch({
+      type: LIKE_POST_REQUEST,
+      data: post.id,
+    });
+    /*
+    setLiked((prev) => true);
     //참을 거짓으로, 거짓을 참으로 toggle로 바꿀때는 위와 같이 작성
+    */
+  }, []);
+  const onUnlike = useCallback(() => {
+    dispatch({
+      type: UNLIKE_POST_REQUEST,
+      data: post.id,
+    });
   }, []);
 
   const onToggleComment = useCallback(() => {
@@ -48,9 +63,9 @@ const PostCard = ({ post }) => {
         actions={[
           <RetweetOutlined key="retweet" />,
           liked ? (
-            <HeartTwoTone twoToneColor="red" key="heart" onClick={onToggleLike} />
+            <HeartTwoTone twoToneColor="red" key="heart" onClick={onUnlike} />
           ) : (
-            <HeartOutlined key="heart" onClick={onToggleLike} />
+            <HeartOutlined key="heart" onClick={onLike} />
           ),
           <MessageOutlined key="comment" onClick={onToggleComment} />,
           <Popover
@@ -112,6 +127,7 @@ PostCard.propTypes = {
     createdAt: PropTypes.string,
     Comment: PropTypes.arrayOf(PropTypes.object),
     Images: PropTypes.arrayOf(PropTypes.object),
+    Likers: PropTypes.arrayOf(PropTypes.object),
   }).isRequired,
 };
 

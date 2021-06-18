@@ -19,7 +19,82 @@ import {
   LOAD_MY_INFO_SUCCESS,
   LOAD_MY_INFO_FAILURE,
   LOAD_MY_INFO_REQUEST,
+  CHANGE_NICKNAME_REQUEST,
+  CHANGE_NICKNAME_SUCCESS,
+  CHANGE_NICKNAME_FAILURE,
+  LOAD_FOLLOWINGS_REQUEST,
+  LOAD_FOLLOWERS_REQUEST,
+  LOAD_FOLLOWINGS_SUCCESS,
+  LOAD_FOLLOWINGS_FAILURE,
+  LOAD_FOLLOWERS_FAILURE,
+  LOAD_FOLLOWERS_SUCCESS,
+  REMOVE_FOLLOWER_REQUEST,
+  REMOVE_FOLLOWER_SUCCESS,
+  REMOVE_FOLLOWER_FAILURE,
 } from "../reducers/user";
+
+function loadFollowersAPI(data) {
+  return axios.get("/user/followers", data);
+}
+
+function* loadFollowers(action) {
+  try {
+    const result = yield call(loadFollowersAPI, action.data);
+    // yield delay(1000);
+    console.log("loadFollowers result", result);
+    yield put({
+      type: LOAD_FOLLOWERS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_FOLLOWERS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+function loadFollowingsAPI(data) {
+  return axios.get("/user/followings", data);
+}
+
+function* loadFollowings(action) {
+  try {
+    const result = yield call(loadFollowingsAPI, action.data);
+    // yield delay(1000);
+    console.log("loadFollowing result", result);
+    yield put({
+      type: LOAD_FOLLOWINGS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: LOAD_FOLLOWINGS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+// 일부 값 수정시는 PATCH 사용
+function changeNicknameAPI(data) {
+  return axios.patch("/user/nickname", { nickname: data });
+}
+
+function* changeNickname(action) {
+  try {
+    console.log("saga login");
+    const result = yield call(changeNicknameAPI, action.data);
+    // yield delay(1000);
+    yield put({
+      type: CHANGE_NICKNAME_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    yield put({
+      type: CHANGE_NICKNAME_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
 
 function loadMyInfoAPI() {
   return axios.get("/user");
@@ -33,7 +108,7 @@ function* loadMyInfo(action) {
   // 성공 결과는 result.data에, 실패경과는 err.response.data에 담겨있음
   // put은 dispatch라고 생각하기
   try {
-    console.log("saga login");
+    // console.log("saga login");
     const result = yield call(loadMyInfoAPI, action.data);
     // yield delay(1000);
     yield put({
@@ -60,7 +135,7 @@ function* logIn(action) {
   // 성공 결과는 result.data에, 실패경과는 err.response.data에 담겨있음
   // put은 dispatch라고 생각하기
   try {
-    console.log("saga login");
+    // console.log("saga login");
     const result = yield call(logInAPI, action.data);
     // yield delay(1000);
     yield put({
@@ -81,7 +156,7 @@ function logOutAPI() {
 
 function* logOut() {
   try {
-    console.log("saga logout");
+    // console.log("saga logout");
     yield call(logOutAPI);
     // yield delay(1000);
     yield put({
@@ -118,17 +193,17 @@ function* signUp(action) {
 }
 
 function followAPI(data) {
-  return axios.post("/api/follow");
+  return axios.patch(`/user/${data}/follow`);
 }
 
 function* follow(action) {
   try {
-    // const result = yield call(followAPI, action.data);
-    yield delay(1000);
+    const result = yield call(followAPI, action.data);
+    // yield delay(1000);
 
     yield put({
       type: FOLLOW_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
   } catch (err) {
     console.error(err);
@@ -140,17 +215,17 @@ function* follow(action) {
 }
 
 function unFollowAPI(data) {
-  return axios.delete("/api/post", data);
+  return axios.delete(`/user/${data}/follow`);
 }
 
 function* unFollow(action) {
   try {
-    // const result = yield call(unFollowAPI, action.data);
-    yield delay(1000);
+    const result = yield call(unFollowAPI, action.data);
+    // yield delay(1000);
     // 아래는 post reducer 조작 부분
     yield put({
       type: UNFOLLOW_SUCCESS,
-      data: action.data,
+      data: result.data,
     });
   } catch (err) {
     console.error(err);
@@ -159,6 +234,38 @@ function* unFollow(action) {
       data: err.response.data,
     });
   }
+}
+
+function removeFollowerAPI(data) {
+  return axios.delete(`/user/FOLLOWER/${data}`);
+}
+
+function* removeFollower(action) {
+  try {
+    const result = yield call(removeFollowerAPI, action.data);
+    // yield delay(1000);
+    // 아래는 post reducer 조작 부분
+    yield put({
+      type: REMOVE_FOLLOWER_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: REMOVE_FOLLOWER_FAILURE,
+      data: err.response.data,
+    });
+  }
+}
+
+function* watchLoadFollowings() {
+  yield takeLatest(LOAD_FOLLOWINGS_REQUEST, loadFollowings);
+}
+function* watchLoadFollowers() {
+  yield takeLatest(LOAD_FOLLOWERS_REQUEST, loadFollowers);
+}
+function* watchChangeNickname() {
+  yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickname);
 }
 
 function* watchLoadMyInfo() {
@@ -182,13 +289,21 @@ function* watchUnFollow() {
   yield takeLatest(UNFOLLOW_REQUEST, unFollow);
 }
 
+function* watchRemoveFollower() {
+  yield takeLatest(REMOVE_FOLLOWER_REQUEST, removeFollower);
+}
+
 export default function* userSaga() {
   yield all([
+    fork(watchChangeNickname),
+    fork(watchLoadFollowers),
+    fork(watchLoadFollowings),
     fork(watchLoadMyInfo),
     fork(watchLogIn),
     fork(watchLogOut),
     fork(watchSignUp),
     fork(watchFollow),
     fork(watchUnFollow),
+    fork(watchRemoveFollower),
   ]);
 }
