@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const path = require("path");
 const postRouter = require("./routes/post");
 const postsRouter = require("./routes/posts");
 const userRouter = require("./routes/user");
@@ -29,6 +30,8 @@ app.use(
     credentials: true, // 이걸 true로 하면 cookie도 전달이 됨.
   })
 );
+app.use("/", express.static(path.join(__dirname, "uploads")));
+
 app.use(express.json()); // front-end에서 json 형식의 값을 보내줄 때 사용
 app.use(express.urlencoded({ extended: true })); // front-end에서 form submit을 했을 때 urlencoded로 넘어오기 때문에 사용
 app.use(cookieParser("nodebirdsecret"));
