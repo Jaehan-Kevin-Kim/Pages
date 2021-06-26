@@ -3,8 +3,9 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const { Post, Image, Comment, User } = require("../models");
+const { Post, Image, Comment, User, Hashtag } = require("../models");
 const { isLoggedIn } = require("./middlewares");
+const hashtag = require("../models/hashtag");
 
 const router = express.Router();
 
@@ -38,10 +39,26 @@ const upload = multer({
 // POST /post
 router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
   try {
+    const hashtags = req.body.content.match(/#[^\s#]+/g);
     const post = await Post.create({
       content: req.body.content,
       UserId: req.user.id,
     });
+
+    if (hashtags) {
+      const result = await Promise.all(
+        hashtags.map((tag) =>
+          Hashtag.findOrCreate({
+            where: { name: tag.slice(1).toLowerCase() },
+          })
+        )
+
+        // hashtags.map((tag) => Hashtag.findOrCreate({ name: tag.slice(1).toLowerCase() }))
+        // slice(1) 하는 이유: 앞에 # 기호 제거 해 주기 위해.
+        // Hashtag.create : Hashtag db table에 값 추가 : 원래는 create로 하지만, 지금같은 경우는 만약에 하나의 hashtag 값이 등록이 되어있으면 추가로 등록 할 필요가 없음. 따라서 create대신 findOrCreate로 변경 (이거의 경우는 찾아보고 있으면 가져오고 없으면 등록하는 명령어)
+      );
+      await post.addHashtags(result.map((v) => v[0])); //이렇게 등록하는 이유는 위와 같이 findOrCreate를 쓰면 결과값이 배열형태로 [[node, true], [express, true]]이런식으로 저장 됨. 그러므로 위와 같은 방법으로 저장하면 됨.
+    }
 
     if (req.body.image) {
       if (Array.isArray(req.body.image)) {
