@@ -209,7 +209,7 @@ function* follow(action) {
     console.error(err);
     yield put({
       type: FOLLOW_FAILURE,
-      data: err.response.data,
+      error: err.response.data,
     });
   }
 }
@@ -231,7 +231,7 @@ function* unFollow(action) {
     console.error(err);
     yield put({
       type: UNFOLLOW_FAILURE,
-      data: err.response.data,
+      error: err.response.data,
     });
   }
 }
@@ -253,7 +253,7 @@ function* removeFollower(action) {
     console.error(err);
     yield put({
       type: REMOVE_FOLLOWER_FAILURE,
-      data: err.response.data,
+      error: err.response.data,
     });
   }
 }

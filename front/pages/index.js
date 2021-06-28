@@ -47,7 +47,16 @@ const Home = () => {
 const Home = () => {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
-  const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector((state) => state.post);
+  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } = useSelector(
+    (state) => state.post
+  );
+
+  useEffect(() => {
+    // console.log("rerender");
+    if (retweetError) {
+      alert(retweetError);
+    }
+  }, [retweetError]);
 
   useEffect(() => {
     dispatch({
@@ -60,19 +69,19 @@ const Home = () => {
 
   useEffect(() => {
     function onScroll() {
-      console.log(
-        //scrollY: 현재 내가 얼마나 내렸는지 (스크롤내리고 올릴때마다 변함)
-        //clientHeight: 현재 화면에서 보이는 길이 (창 크기가 바뀌면 달라짐)
-        //scrollHeight: 총 scroll 길이
-        typeof window.scrollY,
-        typeof document.documentElement.clientHeight,
-        typeof (document.documentElement.scrollHeight - 300)
-      );
+      // console.log(
+      //   //scrollY: 현재 내가 얼마나 내렸는지 (스크롤내리고 올릴때마다 변함)
+      //   //clientHeight: 현재 화면에서 보이는 길이 (창 크기가 바뀌면 달라짐)
+      //   //scrollHeight: 총 scroll 길이
+      //   typeof window.scrollY,
+      //   typeof document.documentElement.clientHeight,
+      //   typeof (document.documentElement.scrollHeight - 300)
+      // );
 
-      console.log(
-        window.scrollY + document.documentElement.clientHeight >
-          document.documentElement.scrollHeight - 300
-      );
+      // console.log(
+      //   window.scrollY + document.documentElement.clientHeight >
+      //     document.documentElement.scrollHeight - 300
+      // );
       if (
         window.scrollY + document.documentElement.clientHeight >
         document.documentElement.scrollHeight - 300

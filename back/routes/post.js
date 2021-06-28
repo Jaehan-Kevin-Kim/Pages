@@ -111,6 +111,164 @@ router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
   // res.json({ id: 1, content: "hello" });
 });
 
+/* 작동 안됨. 나중에 다시 보기
+//POST /post/1/retweet
+//:postId: Parameter: 주소부분에서 동적으로 바뀌는 부분을 parameter라고 부름.
+router.post("/:postId/retweet", isLoggedIn, async (req, res, next) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+      include: [
+        {
+          model: Post,
+          as: "Retweet",
+        },
+      ],
+    });
+    if (!post) {
+      return res.status(403).send("The post is not exist");
+    }
+    // 아래 if 설명: 자기 게시글을 자기가 리트윗 하는 경우 || 자기 게시글을 리트윗 한 다른 게시글을 다시 자기가 리트윗 하는 경우
+    if (req.user.id === post.UserId || (post.Retweet && post.Retweet.UserId === req.user.id)) {
+      return res.status(403).send("You are not allowed to retweet your post");
+    }
+    const retweetTargetId = post.RetweetId || post.id;
+    const exPost = await Post.findOne({
+      where: {
+        UserId: req.user.id,
+        RetweetId: retweetTargetId,
+      },
+    });
+    if (exPost) {
+      return res.status(403).send("You already did retweet");
+    }
+    const retweet = await Post.create({
+      UserId: req.user.id,
+      RetweetId: retweetTargetId,
+      content: "retweet",
+    });
+    const rewteetWithPrevPost = await Post.findOne({
+      where: { id: retweet.id },
+      include: [
+        {
+          model: Post,
+          as: "Retweet",
+          include: [
+            {
+              model: User,
+              attributes: ["id", "nickname"],
+            },
+            {
+              model: Image,
+            },
+          ],
+        },
+        {
+          model: User,
+          attributes: ["id", "nickname"],
+        },
+        // {
+        //   model: User,
+        //   as: "Likers",
+        //   atttributes: ["id"],
+        // },
+        {
+          model: Image,
+        },
+        {
+          model: Comment,
+          include: [
+            {
+              mode: User,
+              attributes: ["id", "nickname"],
+            },
+          ],
+        },
+      ],
+    });
+    res.status(201).json(rewteetWithPrevPost);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+*/
+
+//
+router.post("/:postId/retweet", isLoggedIn, async (req, res, next) => {
+  // POST /post/1/retweet
+  try {
+    const post = await Post.findOne({
+      where: { id: req.params.postId },
+      include: [
+        {
+          model: Post,
+          as: "Retweet",
+        },
+      ],
+    });
+    if (!post) {
+      return res.status(403).send("존재하지 않는 게시글입니다.");
+    }
+    if (req.user.id === post.UserId || (post.Retweet && post.Retweet.UserId === req.user.id)) {
+      return res.status(403).send("자신의 글은 리트윗할 수 없습니다.");
+    }
+    const retweetTargetId = post.RetweetId || post.id;
+    const exPost = await Post.findOne({
+      where: {
+        UserId: req.user.id,
+        RetweetId: retweetTargetId,
+      },
+    });
+    if (exPost) {
+      return res.status(403).send("이미 리트윗했습니다.");
+    }
+    const retweet = await Post.create({
+      UserId: req.user.id,
+      RetweetId: retweetTargetId,
+      content: "retweet",
+    });
+    const retweetWithPrevPost = await Post.findOne({
+      where: { id: retweet.id },
+      include: [
+        {
+          model: Post,
+          as: "Retweet",
+          include: [
+            {
+              model: User,
+              attributes: ["id", "nickname"],
+            },
+            {
+              model: Image,
+            },
+          ],
+        },
+        {
+          model: User,
+          attributes: ["id", "nickname"],
+        },
+        {
+          model: Image,
+        },
+        {
+          model: Comment,
+          include: [
+            {
+              model: User,
+              attributes: ["id", "nickname"],
+            },
+          ],
+        },
+      ],
+    });
+    res.status(201).json(retweetWithPrevPost);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 //아래 middleware에서 uplaod.array('image')를 봤을때 array인 이유는 사진이 여러장 올라갈 거기 때문, 한장이면 single 쓰면 됨. 그리고 'image'는 front-end에서 사진을 올리는 input내의 tag name이 (name='image')이기 때문. 만약 image없이 text만 올리는 경우는 upload.none()하면 됨. 마지막으로 front-end에서 input이 여러개인 경우는 fields를 사용하면 됨.
 router.post("/images", isLoggedIn, upload.array("image"), (req, res, next) => {
   console.log(req.files);

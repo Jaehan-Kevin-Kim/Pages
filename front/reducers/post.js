@@ -79,6 +79,14 @@ export const initialState = {
   addCommentLoading: false,
   addCommentDone: false,
   addCommentError: null,
+
+  uploadImagesLoading: false,
+  uploadImagesDone: false,
+  uploadImagesError: null,
+
+  retweetLoading: false,
+  retweetDone: false,
+  retweetError: null,
 };
 
 /*
@@ -109,6 +117,16 @@ export const generateDummyPost = (number) =>
     }));
     */
 // initialState.mainPosts = initialState.mainPosts.concat(generateDummyPost(10));
+
+export const RETWEET_REQUEST = "RETWEET_REQUEST";
+export const RETWEET_SUCCESS = "RETWEET_SUCCESS";
+export const RETWEET_FAILURE = "RETWEET_FAILURE";
+
+export const UPLOAD_IMAGES_REQUEST = "UPLOAD_IMAGES_REQUEST";
+export const UPLOAD_IMAGES_SUCCESS = "UPLOAD_IMAGES_SUCCESS";
+export const UPLOAD_IMAGES_FAILURE = "UPLOAD_IMAGES_FAILURE";
+
+export const REMOVE_IMAGE = "REMOVE_IMAGE"; //Remove Image경우 하나만 만들면 됨(동기이기 때문에). 만약 서버에서도 빼주고 싶다면 보통 다른 것들과 같이 request,success,failure 다 해줘야 함. image의 경우 서버에서 가지고 있는게 더 이득이기때문에 프론트에서만 지워주는 경우가 많암. (지금은 프론트에서만 지우기때문에 request,success,failure등이 필요 없음)
 
 export const LIKE_POST_REQUEST = "LIKE_POST_REQUEST";
 export const LIKE_POST_SUCCESS = "LIKE_POST_SUCCESS";
@@ -171,6 +189,47 @@ const reducer = (state = initialState, action) => {
   // 여기부터는 draft가 state처럼 사용되고 이건 막 바꿔도 됨. (immer가 알아서 처리해 주므로)
   return produce(state, (draft) => {
     switch (action.type) {
+      case RETWEET_REQUEST: {
+        draft.retweetLoading = true;
+        draft.retweetDone = false;
+        draft.retweetError = null;
+        break;
+      }
+      case RETWEET_SUCCESS: {
+        draft.retweetLoading = false;
+        draft.retweetDone = true;
+        draft.mainPosts.unshift(action.data);
+        break;
+      }
+      case RETWEET_FAILURE: {
+        draft.retweetLoading = false;
+        draft.retweetError = action.error;
+        break;
+      }
+
+      case REMOVE_IMAGE: {
+        draft.imagePaths = draft.imagePaths.filter((v, i) => i !== action.data);
+        break;
+      }
+
+      case UPLOAD_IMAGES_REQUEST: {
+        draft.uploadImagesLoading = true;
+        draft.uploadImagesDone = false;
+        draft.uploadImagesError = null;
+        break;
+      }
+      case UPLOAD_IMAGES_SUCCESS: {
+        draft.uploadImagesLoading = false;
+        draft.uploadImagesDone = true;
+        draft.imagePaths = action.data;
+        break;
+      }
+      case UPLOAD_IMAGES_FAILURE: {
+        draft.uploadImagesLoading = false;
+        draft.uploadImagesError = action.error;
+        break;
+      }
+
       case LIKE_POST_REQUEST: {
         draft.likePostLoading = true;
         draft.likePostDone = false;
@@ -239,6 +298,7 @@ const reducer = (state = initialState, action) => {
         // draft.mainPosts = [dummyPost(action.data), ...state.mainPosts]; // 이렇게 하거나 혹은 아래와 같이 unshift사용 하면 배열값을 따로 정의안하고 (...이 사라 짐) 바로 사용가능 함
         // draft.mainPosts.unshift(dummyPost(action.data));
         draft.mainPosts.unshift(action.data);
+        draft.imagePaths = [];
         break;
         // action.data.content, postId, userId;
         // return {
