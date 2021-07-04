@@ -30,7 +30,7 @@ app.use(
     credentials: true, // 이걸 true로 하면 cookie도 전달이 됨.
   })
 );
-app.use("/", express.static(path.join(__dirname, "uploads")));
+app.use("/", express.static(path.join(__dirname, "uploads"))); //static file들 (image, css, js)로 접근 할 수 있게 도와주는 미들웨어. 이 경우에는 upload 폴더로 접근 할 수 있게 함. 간단히 말해서 browser에서 127.0.0.1:3000/images로 접근한다면 express.static()자체는 back-end의 root directory가 됨. 따라서 뒤에 path.join(__dirname, 'uploads')를 이용해서 root/uploads로 접근 할 수 있게 해주는 것. (__dirname 은 현재 폴더: back folder)
 
 app.use(express.json()); // front-end에서 json 형식의 값을 보내줄 때 사용
 app.use(express.urlencoded({ extended: true })); // front-end에서 form submit을 했을 때 urlencoded로 넘어오기 때문에 사용

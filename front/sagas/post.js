@@ -118,14 +118,15 @@ function* unlikePost(action) {
   }
 }
 
-function loadPostsAPI(data) {
-  return axios.get("/posts", data);
+//get의 경우 ,뒤의 자리가 data가 아닌 withCredentials의 자리이므로 get에서 data를 보내려면 querystring으로 넣어야 함.(key=value의 형태)
+function loadPostsAPI(lastId) {
+  return axios.get(`/posts?lastId=${lastId || 0}`);
 }
 
 function* loadPosts(action) {
   try {
     // console.log("loadPosts in Saga");
-    const result = yield call(loadPostsAPI, action.data);
+    const result = yield call(loadPostsAPI, action.lastId);
     // yield delay(1000);
     yield put({
       type: LOAD_POSTS_SUCCESS,
@@ -234,7 +235,7 @@ function* watchUnlikePost() {
 }
 
 function* watchLoadPosts() {
-  yield throttle(2000, LOAD_POSTS_REQUEST, loadPosts);
+  yield throttle(5000, LOAD_POSTS_REQUEST, loadPosts);
 }
 function* watchAddComment() {
   yield takeLatest(ADD_COMMENT_REQUEST, addComment);

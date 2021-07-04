@@ -207,6 +207,7 @@ const reducer = (state = initialState, action) => {
         break;
       }
 
+      // 아래가 request, success, failure가 아닌 remove_image 하나인 이유는 동기 함수이기 때문. (back-end에서 요청을 기다려서 받는게 아닌 그냥 front-end측에서만 지우고, backend에서는 사진을 남겨 둠.)
       case REMOVE_IMAGE: {
         draft.imagePaths = draft.imagePaths.filter((v, i) => i !== action.data);
         break;
@@ -276,8 +277,8 @@ const reducer = (state = initialState, action) => {
       case LOAD_POSTS_SUCCESS: {
         draft.loadPostsLoading = false;
         draft.loadPostsDone = true;
-        draft.mainPosts = action.data.concat(draft.mainPosts);
-        draft.hasMorePosts = draft.mainPosts.length < 50;
+        draft.mainPosts = draft.mainPosts.concat(action.data);
+        draft.hasMorePosts = action.data.length === 10;
         break;
       }
       case LOAD_POSTS_FAILURE:
