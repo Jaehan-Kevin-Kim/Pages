@@ -7,6 +7,9 @@ import FollowerList from "../components/FollowerList";
 import FollowList from "../components/FollowList";
 import NicknameEditForm from "../components/NicknameEditForm";
 import { LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWINGS_REQUEST } from "../reducers/user";
+import wrapper from "../store/configureStore";
+import axios from "axios";
+import { END } from "redux-saga";
 
 const profile = () => {
   // const followerList = [{ nickname: "kevin" }, { nickname: "sample" }, { nickname: "admin user"}];
@@ -35,7 +38,7 @@ const profile = () => {
   return (
     <>
       <Head>
-        <title>My Profile | NodeBird</title>
+        <title>My Profile | Poster</title>
       </Head>
       <AppLayout>
         <NicknameEditForm />
@@ -45,5 +48,22 @@ const profile = () => {
     </>
   );
 };
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  console.log("getServersideProps start");
+  console.log(context.req.headers);
+  const cookie = context.req ? context.req.headers.cookie : "";
+  axios.defaults.headers.Cookie = "";
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+
+  console.log("context", context);
+  context.store.dispatch({
+    type: LOAD_MY_INFO_REQUEST,
+  });
+  context.store.dispatch(END);
+  await context.store.sagaTask.toPromise();
+});
 
 export default profile;

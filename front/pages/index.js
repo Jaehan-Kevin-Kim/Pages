@@ -5,6 +5,9 @@ import PostCard from "../components/PostCard";
 import PostForm from "../components/PostForm";
 import { LOAD_POSTS_REQUEST } from "../reducers/post";
 import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
+import wrapper from "../store/configureStore";
+import { END } from "redux-saga";
+import axios from "axios";
 
 /*
 const Home = () => {
@@ -58,6 +61,7 @@ const Home = () => {
     }
   }, [retweetError]);
 
+  /*
   useEffect(() => {
     dispatch({
       type: LOAD_MY_INFO_REQUEST,
@@ -66,11 +70,12 @@ const Home = () => {
       type: LOAD_POSTS_REQUEST,
     });
   }, []);
+*/
 
   useEffect(() => {
     function onScroll() {
       // console.log(
-      //   //scrollY: 현재 내가 얼마나 내렸는지 (스크롤내리고 올릴때마다 변함)
+      //   //scrollY: 현재 내가 얼마나 내렸는지 (스크롤내리고 올릴때마다 변함) : pageYOffset
       //   //clientHeight: 현재 화면에서 보이는 길이 (창 크기가 바뀌면 달라짐)
       //   //scrollHeight: 총 scroll 길이
       //   typeof window.scrollY,
@@ -112,5 +117,25 @@ const Home = () => {
     </AppLayout>
   );
 };
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  console.log("getServersideProps start");
+  console.log(context.req.headers);
+  const cookie = context.req ? context.req.headers.cookie : "";
+  axios.defaults.headers.Cookie = "";
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+
+  console.log("context", context);
+  context.store.dispatch({
+    type: LOAD_MY_INFO_REQUEST,
+  });
+  context.store.dispatch({
+    type: LOAD_POSTS_REQUEST,
+  });
+  context.store.dispatch(END);
+  await context.store.sagaTask.toPromise();
+});
 
 export default Home;

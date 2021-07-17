@@ -79,6 +79,7 @@ const PostCard = ({ post }) => {
     });
   }, [id]);
 
+  console.log("post", post);
   const liked = post.Likers.find((v) => v.id === id);
   return (
     <div style={{ marginBottom: 20 }}>
@@ -109,6 +110,7 @@ const PostCard = ({ post }) => {
               </Button.Group>
             }>
             <EllipsisOutlined />
+            {/* ... */}
           </Popover>,
         ]}
         title={post.RetweetId ? `Retweet by ${post.User.nickname}` : null}

@@ -11,7 +11,7 @@ router.get("/", async (req, res, next) => {
     if (parseInt(req.query.lastId, 10)) {
       where.id = { [Op.lt]: parseInt(req.query.lastId, 10) }; // less than lastId
     }
-    console.log("where", where);
+    // console.log("where", where);
 
     const posts = await Post.findAll({
       where,
@@ -48,7 +48,7 @@ router.get("/", async (req, res, next) => {
         },
       ],
     });
-    console.log("posts: ", posts);
+    // console.log("posts: ", posts);
     res.status(200).json(posts);
   } catch (error) {
     console.error(error);

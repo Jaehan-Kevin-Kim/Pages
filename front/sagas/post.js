@@ -27,6 +27,9 @@ import {
   RETWEET_REQUEST,
   RETWEET_SUCCESS,
   RETWEET_FAILURE,
+  LOAD_POST_REQUEST,
+  LOAD_POST_FAILURE,
+  LOAD_POST_SUCCESS,
 } from "../reducers/post";
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
 
@@ -113,6 +116,29 @@ function* unlikePost(action) {
     console.error(err);
     yield put({
       type: UNLIKE_POST_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+//get의 경우 ,뒤의 자리가 data가 아닌 withCredentials의 자리이므로 get에서 data를 보내려면 querystring으로 넣어야 함.(key=value의 형태)
+function loadPostAPI(data) {
+  return axios.get(`/post/${data}`);
+}
+
+function* loadPost(action) {
+  try {
+    // console.log("loadPost in Saga");
+    const result = yield call(loadPostAPI, action.data);
+    // yield delay(1000);
+    yield put({
+      type: LOAD_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: LOAD_POST_FAILURE,
       error: err.response.data,
     });
   }
@@ -221,6 +247,9 @@ function* addComment(action) {
   }
 }
 
+function* watchLoadPost() {
+  yield takeLatest(LOAD_POST_REQUEST, loadPost);
+}
 function* watchRetweet() {
   yield takeLatest(RETWEET_REQUEST, retweet);
 }
@@ -249,6 +278,7 @@ function* watchAddPost() {
 
 export default function* postSaga() {
   yield all([
+    fork(watchLoadPost),
     fork(watchRetweet),
     fork(watchUploadImages),
     fork(watchLikePost),

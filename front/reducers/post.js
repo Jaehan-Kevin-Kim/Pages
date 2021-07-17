@@ -60,10 +60,14 @@ export const initialState = {
   */
   mainPosts: [],
   imagePaths: [],
+  singlePost: null,
   hasMorePosts: true,
   likePostLoading: false,
   likePostDone: false,
   likePostError: null,
+  loadPostLoading: false,
+  loadPostDone: false,
+  loadPostError: null,
   unlikePostLoading: false,
   unlikePostDone: false,
   unlikePostError: null,
@@ -117,6 +121,10 @@ export const generateDummyPost = (number) =>
     }));
     */
 // initialState.mainPosts = initialState.mainPosts.concat(generateDummyPost(10));
+
+export const LOAD_POST_REQUEST = "LOAD_POST_REQUEST";
+export const LOAD_POST_SUCCESS = "LOAD_POST_SUCCESS";
+export const LOAD_POST_FAILURE = "LOAD_POST_FAILURE";
 
 export const RETWEET_REQUEST = "RETWEET_REQUEST";
 export const RETWEET_SUCCESS = "RETWEET_SUCCESS";
@@ -266,6 +274,23 @@ const reducer = (state = initialState, action) => {
       case UNLIKE_POST_FAILURE:
         draft.unlikePostLoading = false;
         draft.unlikePostError = action.error;
+        break;
+
+      case LOAD_POST_REQUEST: {
+        draft.loadPostLoading = true;
+        draft.loadPostDone = false;
+        draft.loadPostError = null;
+        break;
+      }
+      case LOAD_POST_SUCCESS: {
+        draft.loadPostLoading = false;
+        draft.loadPostDone = true;
+        draft.singlePost = action.data;
+        break;
+      }
+      case LOAD_POST_FAILURE:
+        draft.loadPostLoading = false;
+        draft.loadPostError = action.error;
         break;
 
       case LOAD_POSTS_REQUEST: {

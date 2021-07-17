@@ -31,6 +31,22 @@ const initialState = {
 //   };
 // };
 
+const rootReducer = (state, action) => {
+  switch (action.type) {
+    case HYDRATE:
+      console.log("HYDRATE", action);
+      return action.payload;
+    default: {
+      const combinedReducer = combineReducers({
+        user,
+        post,
+      });
+      return combinedReducer(state, action);
+    }
+  }
+};
+
+/*
 // reducer (이전상태, 액션) => 다음상태 (이전상태와, 액션을 통해서 다음 상태를 만들어 내는 함수)
 const rootReducer = combineReducers({
   index: (state = {}, action) => {
@@ -51,6 +67,7 @@ const rootReducer = combineReducers({
   user,
   post,
 });
+*/
 
 export default rootReducer;
 
