@@ -11,7 +11,6 @@ const NodeBird = ({ Component }) => {
     <>
       <Head>
         <meta charSet="utf-8" />
-        {/* <link rel="shortcut icon" href="http://localhost:3060/favicon.ico" /> */}
         <title>Poster</title>
       </Head>
       <Component />

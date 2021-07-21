@@ -4,6 +4,7 @@ const path = require("path");
 const postRouter = require("./routes/post");
 const postsRouter = require("./routes/posts");
 const userRouter = require("./routes/user");
+const hashtagRouter = require("./routes/hashtag");
 const db = require("./models");
 const cors = require("cors");
 const session = require("express-session");
@@ -56,6 +57,7 @@ app.get("/api", (req, res) => {
 app.use("/post", postRouter);
 app.use("/posts", postsRouter);
 app.use("/user", userRouter);
+app.use("/hashtag", hashtagRouter);
 
 /*
 app.get("/posts", (req, res) => {

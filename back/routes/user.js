@@ -1,8 +1,9 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-const { User, Post } = require("../models");
+const { User, Post, Image, Comment } = require("../models");
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 const passport = require("passport");
+const { Op } = require("sequelize");
 const router = express.Router();
 
 //GET /user
@@ -80,6 +81,61 @@ router.get("/:userId", async (req, res, next) => {
   } catch (err) {
     console.error(err);
     next(err);
+  }
+});
+
+// GET /user/1/posts
+router.get("/:userId/posts", async (req, res, next) => {
+  try {
+    const where = { UserId: req.params.userId };
+    // if it's not the initial loading: (if it's an initial loading, the value will be zero)
+    if (parseInt(req.query.lastId, 10)) {
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10) }; // less than lastId
+    }
+    // console.log("where", where);
+
+    const posts = await Post.findAll({
+      where,
+      limit: 10, //10개만 가져오기
+      //   offset: 0, //0번 부터 위의 limit 갯수 까지 가져오기 (1~10번 게시글까지)
+      order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: User,
+          attributes: ["id", "nickname"],
+        },
+        { model: Image },
+        {
+          model: Comment,
+          include: [
+            { model: User, attributes: ["id", "nickname"], order: [["createdAt", "DESC"]] },
+          ],
+        },
+        {
+          model: User, // 좋아요 누른 사람
+          as: "Likers",
+          attributes: ["id"],
+        },
+        {
+          model: Post,
+          as: "Retweet",
+          include: [
+            {
+              model: User,
+              attributes: ["id", "nickname"],
+            },
+            {
+              model: Image,
+            },
+          ],
+        },
+      ],
+    });
+    // console.log("posts: ", posts);
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 });
 
