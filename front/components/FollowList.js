@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { UNFOLLOW_REQUEST, REMOVE_FOLLOWER_REQUEST } from "../reducers/user";
 import { useDispatch } from "react-redux";
 
-const FollowList = ({ header, data }) => {
+const FollowList = ({ header, data, onClickMore, loading }) => {
   const dispatch = useDispatch();
 
   //고차 함수 사용
@@ -30,7 +30,7 @@ const FollowList = ({ header, data }) => {
       header={<div>{header}</div>}
       loadMore={
         <div style={{ textAlign: "center", margin: "10px 0" }}>
-          <Button>More...</Button>
+          <Button onClick={onClickMore} loading={loading}>More...</Button>
         </div>
       }
       bordered
@@ -45,6 +45,13 @@ const FollowList = ({ header, data }) => {
       )}
     />
   );
+};
+
+FollowList.PropTypes = {
+  header: PropTypes.array.isRequired,
+  data: PropTypes.array.isRequired,
+  onClickMore: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
 
 export default FollowList;

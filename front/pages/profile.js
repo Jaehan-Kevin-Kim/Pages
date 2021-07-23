@@ -1,30 +1,48 @@
 import Router from "next/router";
 import Head from "next/head";
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AppLayout from "../components/AppLayout";
 import FollowerList from "../components/FollowerList";
 import FollowList from "../components/FollowList";
+import useSWR from "swr";
 import NicknameEditForm from "../components/NicknameEditForm";
-import { LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWINGS_REQUEST } from "../reducers/user";
+import {
+  LOAD_FOLLOWERS_REQUEST,
+  LOAD_FOLLOWINGS_REQUEST,
+  LOAD_MY_INFO_REQUEST,
+} from "../reducers/user";
 import wrapper from "../store/configureStore";
 import axios from "axios";
 import { END } from "redux-saga";
+
+const fetcher = (url) => axios.get(url, { withCredentials: true }).then((result) => result.data);
 
 const profile = () => {
   // const followerList = [{ nickname: "kevin" }, { nickname: "sample" }, { nickname: "admin user"}];
   // const followingList = [{ nickname: "kevin" }, { nickname: "sample" }, { nickname: "admin" }];
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
+  const [followersLimit, setFollowersLimit] = useState(3);
+  const [followingsLimit, setFollowingsLimit] = useState(3);
 
-  useEffect(() => {
-    dispatch({
-      type: LOAD_FOLLOWERS_REQUEST,
-    });
-    dispatch({
-      type: LOAD_FOLLOWINGS_REQUEST,
-    });
-  }, []);
+  const { data: followersData, error: followerError } = useSWR(
+    `http://localhost:3065/user/followers?limit=${followersLimit}`,
+    fetcher
+  );
+  const { data: followingsData, error: followingError } = useSWR(
+    `http://localhost:3065/user/followings?limit=${followingsLimit}`,
+    fetcher
+  );
+
+  // useEffect(() => {
+  //   dispatch({
+  //     type: LOAD_FOLLOWERS_REQUEST,
+  //   });
+  //   dispatch({
+  //     type: LOAD_FOLLOWINGS_REQUEST,
+  //   });
+  // }, []);
 
   useEffect(() => {
     if (!(me && me.id)) {
@@ -32,9 +50,21 @@ const profile = () => {
     }
   }, [me && me.id]);
 
+  const loadMoreFollowings = useCallback(() => {
+    setFollowingsLimit((prev) => prev + 3);
+  }, []);
+  const loadMoreFollowers = useCallback(() => {
+    setFollowersLimit((prev) => prev + 3);
+  }, []);
+
   if (!me) {
-    return null;
+    return "Loading my info...";
   }
+  if (followerError || followingError) {
+    console.error(followerError || followingError);
+    return "Error occurs during following or follower action";
+  }
+
   return (
     <>
       <Head>
@@ -42,8 +72,20 @@ const profile = () => {
       </Head>
       <AppLayout>
         <NicknameEditForm />
-        <FollowList header="Following List" data={me.Followings} />
-        <FollowList header="Follower List" data={me.Followers} />
+        {/* <FollowList header="Following List" data={me.Followings} /> */}
+        {/* <FollowList header="Follower List" data={me.Followers} /> */}
+        <FollowList
+          header="Following List"
+          data={followingsData}
+          onClickMore={loadMoreFollowings}
+          loading={!followingsData && !followingError}
+        />
+        <FollowList
+          header="Follower List"
+          data={followersData}
+          onClickMore={loadMoreFollowers}
+          loading={!followersData && !followerError}
+        />
       </AppLayout>
     </>
   );
