@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 import Link from "next/link";
 import { Input, Menu, Row, Col } from "antd";
@@ -8,6 +8,8 @@ import LoginForm from "./LoginForm";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { createGlobalStyle } from "styled-components";
+import useInput from "../hooks/useinput";
+import Router from "next/router";
 
 const SearchInput = styled(Input.Search)`
   vertical-align: middle;
@@ -33,6 +35,11 @@ const AppLayout = ({ children }) => {
 
   // const { isLoggedIn } = useSelector((state) => state.user); //Redux 사용하면 위와 같이 useState로 값 설정 필요 없음
   //바로 위와 같이 써도 되고, 이렇게 써도 됨.
+
+  const [searchInput, onChangeSearchInput] = useInput("");
+  const onSearch = useCallback(() => {
+    Router.push(`/hashtag/${searchInput}`);
+  }, [searchInput]);
   const { me } = useSelector((state) => state.user); //Redux 사용하면 위와 같이 useState로 값 설정 필요 없음
 
   return (
@@ -50,7 +57,12 @@ const AppLayout = ({ children }) => {
           </Link>
         </Menu.Item>
         <Menu.Item>
-          <SearchInput enterButton />
+          <SearchInput
+            enterButton
+            value={searchInput}
+            onChange={onChangeSearchInput}
+            onSearch={onSearch}
+          />
         </Menu.Item>
         <Menu.Item>
           <Link href="/signup">

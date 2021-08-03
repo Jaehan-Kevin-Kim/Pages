@@ -50,7 +50,7 @@ const User = () => {
         <meta property="og:image" content="https://nodebird.com/favicon.ico" />
         <meta property="og:url" content={`https://nodebird.com/user/${id}`} />
       </Head>
-      )
+
       {userInfo ? (
         <Card
           actions={[
@@ -82,19 +82,34 @@ const User = () => {
 
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
   const cookie = context.req ? context.req.headers.cookie : "";
+  console.log("context", context);
   axios.defaults.headers.Cookie = "";
   if (context.req && cookie) {
     axios.defaults.headers.Cookie = cookie;
   }
+  // context.store.dispatch({
+  //   type: LOAD_MY_INFO_REQUEST,
+  // });
+  // context.store.dispatch({
+  //   type: LOAD_HASHTAG_POSTS_REQUEST,
+  //   data: context.params.tag,
+  // });
+  context.store.dispatch({
+    type: LOAD_USER_POSTS_REQUEST,
+    data: context.params.id,
+  });
   context.store.dispatch({
     type: LOAD_MY_INFO_REQUEST,
   });
   context.store.dispatch({
-    type: LOAD_HASHTAG_POSTS_REQUEST,
-    data: context.params.tag,
+    type: LOAD_USER_REQUEST,
+    data: context.params.id,
   });
+
   context.store.dispatch(END);
   await context.store.sagaTask.toPromise();
+  console.log("getState", context.store.getState().post.mainPosts);
+  return { props: {} };
 });
 
 export default User;
