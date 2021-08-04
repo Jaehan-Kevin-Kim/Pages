@@ -1,6 +1,6 @@
 import { Button, Form, Input } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
-import useInput from "../hooks/useinput";
+import useInput from "../hooks/useInput";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import { ADD_COMMENT_REQUEST } from "../reducers/post";
@@ -15,7 +15,7 @@ const CommentForm = ({ post }) => {
     if (addCommentDone) {
       setCommentText("");
     }
-    console.log('comment Text: ', commentText);
+    console.log("comment Text: ", commentText);
   }, [addCommentDone]);
 
   const onSubmitComment = useCallback(() => {
@@ -33,8 +33,8 @@ const CommentForm = ({ post }) => {
         <Input.TextArea onChange={onChangeCommentText} value={commentText} rows={4} />
         <Button
           style={{ position: "absolute", right: 0, bottom: -40, zIndex: 1 }}
-          type='primary'
-          htmlType='submit'
+          type="primary"
+          htmlType="submit"
           loading={addCommentLoading}>
           Comment Submit!
         </Button>

@@ -4,7 +4,7 @@ import Proptypes from "prop-types";
 // import Form from "antd/lib/form/Form";
 import Link from "next/link";
 import styled from "styled-components";
-import useInput from "../hooks/useinput";
+import useInput from "../hooks/useInput";
 import { useDispatch, useSelector } from "react-redux";
 import { loginRequestAction } from "../reducers/user";
 
