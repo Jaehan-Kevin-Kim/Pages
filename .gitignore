@@ -1,0 +1,6 @@
+
+# Serverless directories
+pages.pem
+node_modules
+.env
+.next
