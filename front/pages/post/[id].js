@@ -16,9 +16,9 @@ const Post = () => {
 
   console.log("singlePost", singlePost);
 
-  if (router.isFallback) {
-    return <div>Loading...</div>;
-  }
+  // if (router.isFallback) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <AppLayout>
