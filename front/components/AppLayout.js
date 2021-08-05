@@ -8,7 +8,7 @@ import LoginForm from "./LoginForm";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { createGlobalStyle } from "styled-components";
-import useInput from "../hooks/useinput";
+import useInput from "../hooks/useInput";
 import Router from "next/router";
 
 const SearchInput = styled(Input.Search)`

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import { Checkbox, Form, Input, Button } from "antd";
 import AppLayout from "../components/AppLayout";
-import useInput from "../hooks/useinput";
+import useInput from "../hooks/useInput";
 import styled from "styled-components";
 import Router from "next/router";
 import { useDispatch, useSelector } from "react-redux";
