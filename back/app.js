@@ -1,4 +1,5 @@
 const express = require("express");
+const dotenv = require("dotenv");
 const app = express();
 const path = require("path");
 const postRouter = require("./routes/post");
@@ -11,7 +12,6 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const passportConfig = require("./passport");
 const passport = require("passport");
-const dotenv = require("dotenv");
 const morgan = require("morgan");
 const hpp = require("hpp");
 const helmet = require("helmet");
