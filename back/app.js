@@ -55,10 +55,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: false,
-      domain: process.env.NODE_ENV === "production" && [
-        "http://3.98.125.190",
-        "http://3.98.97.180",
-      ],
+      domain: process.env.NODE_ENV === "production" && "http://3.98.97.180",
     },
   })
 );
