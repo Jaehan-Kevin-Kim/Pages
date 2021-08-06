@@ -13,8 +13,8 @@ const passportConfig = require("./passport");
 const passport = require("passport");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
-const helmet = require("helmet");
 const hpp = require("hpp");
+const helmet = require("helmet");
 
 dotenv.config();
 db.sequelize
@@ -34,10 +34,10 @@ if (process.env.NODE_ENV === "production") {
   app.use(morgan("dev"));
 }
 
-app.use(morgan("dev"));
+// app.use(morgan("dev"));
 app.use(
   cors({
-    origin: ["http://localhost:3060", "nodebird.com"],
+    origin: ["http://localhost:3060", "nodebird.com", "http://3.98.125.190"],
     credentials: true, // 이걸 true로 하면 cookie도 전달이 됨.
   })
 );
