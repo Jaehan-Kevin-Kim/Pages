@@ -2,6 +2,8 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const multerS3 = require("multer-s3");
+const AWS = require("aws-sdk");
 
 const { Post, Image, Comment, User, Hashtag } = require("../models");
 const { isLoggedIn } = require("./middlewares");
@@ -18,6 +20,24 @@ try {
 
 //POST /post/images
 // multer는 form 마다 세팅이 다르기 때문에 아래와 같이 router마다 별도의 세팅을 해 줘야 함.
+AWS.config.update({
+  accessKeyId: process.env.S3_ACCESS_KEY_ID,
+  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+  region: "ca-central-1",
+});
+
+const upload = multer({
+  storage: multerS3({
+    s3: new AWS.S3(),
+    bucket: "pages-s3",
+    key(req, file, cb) {
+      cb(null, `original/${Date.now()}_${path.basename(file.originalname)}`);
+    },
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 }, // 20MB로 파일사이즈 제한
+});
+
+/*
 const upload = multer({
   //storage: 어디다 저장할지?
   storage: multer.diskStorage({
@@ -35,7 +55,7 @@ const upload = multer({
   }),
   limits: { fileSize: 20 * 1024 * 1024 }, // 20MB로 파일사이즈 제한
 });
-
+*/
 // POST /post
 router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
   try {
@@ -327,7 +347,8 @@ router.post("/:postId/retweet", isLoggedIn, async (req, res, next) => {
 //아래 middleware에서 uplaod.array('image')를 봤을때 array인 이유는 사진이 여러장 올라갈 거기 때문, 한장이면 single 쓰면 됨. 그리고 'image'는 front-end에서 사진을 올리는 input내의 tag name이 (name='image')이기 때문. 만약 image없이 text만 올리는 경우는 upload.none()하면 됨. 마지막으로 front-end에서 input이 여러개인 경우는 fields를 사용하면 됨.
 router.post("/images", isLoggedIn, upload.array("image"), (req, res, next) => {
   console.log(req.files);
-  res.json(req.files.map((v) => v.filename));
+  // res.json(req.files.map((v) => v.filename));
+  res.json(req.files.map((v) => v.location));
 });
 
 //POST /post/1/comment
