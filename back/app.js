@@ -52,6 +52,14 @@ app.use(
     resave: false,
     // secret: "nodebirdsecret", //secret: Cookie 전달을 위해 보통은 문자열을 바탕으로 cookie의 값을 생성하지만, secret을 이용해서 특정 값을 지정 할 수 있음 //이걸 .env에 보내줘서 code에 나오지 않도록 가림.
     secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      domain: process.env.NODE_ENV === "production" && [
+        "http://3.98.125.190",
+        "http://3.98.97.180",
+      ],
+    },
   })
 );
 app.use(passport.initialize());
@@ -80,6 +88,6 @@ app.get("/posts", (req, res) => {
 */
 app.use((err, req, res, next) => {});
 
-app.listen(80 , () => {
+app.listen(80, () => {
   console.log("Server is running!");
 });
