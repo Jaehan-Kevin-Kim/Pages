@@ -13,8 +13,8 @@ const passportConfig = require("./passport");
 const passport = require("passport");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
-const helmet = require("helmet");
 const hpp = require("hpp");
+const helmet = require("helmet");
 
 dotenv.config();
 db.sequelize
